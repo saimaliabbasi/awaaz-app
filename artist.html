@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Awaaz | Artists</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/player.css" />
+  <link rel="stylesheet" href="css/urdu.css" />
+</head>
+<body class="subpage-body">
+  <main class="subpage-shell">
+    <section class="page-panel">
+      <div class="page-nav">
+        <a class="back-link" href="index.html">&larr; Back to home</a>
+        <div class="page-actions">
+          <a class="back-link" href="ghazal.html">Poetry</a>
+          <a class="back-link" href="player.html">Full player</a>
+        </div>
+      </div>
+
+      <div class="page-kicker">Artist directory</div>
+      <h1 class="page-title">Beloved artists</h1>
+      <p class="page-copy">The artist route now resolves correctly and uses the same data source as the home page. Selecting a card updates the spotlight panel and can start a matching track.</p>
+
+      <div class="page-grid">
+        <section class="page-card">
+          <div class="section-header">
+            <h2 class="section-title">Browse artists</h2>
+          </div>
+          <div class="artist-grid" id="artist-grid"></div>
+        </section>
+
+        <aside class="page-card artist-spotlight" id="artist-spotlight"></aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="player-bar" id="player-bar">
+    <div class="player-track">
+      <div class="player-thumb" id="player-thumb">
+        <div class="thumb-spin"></div>
+      </div>
+      <div class="player-track-info">
+        <span class="player-song" id="player-song">Pasoori</span>
+        <span class="player-artist" id="player-artist">Ali Sethi and Shae Gill</span>
+      </div>
+    </div>
+    <div class="player-controls">
+      <button class="ctrl-btn" onclick="prevTrack()" title="Previous">&#9664;</button>
+      <button class="ctrl-btn play-pause-btn" id="play-pause-btn" onclick="togglePlay()" title="Play or pause">&#9654;</button>
+      <button class="ctrl-btn" onclick="nextTrack()" title="Next">&#9654;&#9654;</button>
+    </div>
+    <div class="player-progress-wrap">
+      <span class="time-label" id="time-current">0:00</span>
+      <div class="progress-bar" id="progress-bar" onclick="seekTrack(event)">
+        <div class="progress-fill" id="progress-fill"></div>
+        <div class="progress-thumb" id="progress-thumb"></div>
+      </div>
+      <span class="time-label" id="time-total">0:00</span>
+    </div>
+    <div class="player-extra">
+      <button class="ctrl-btn-sm" onclick="toggleLike()" id="like-btn" title="Like">Like</button>
+      <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80" oninput="setVolume(this.value)" />
+      <button class="ctrl-btn-sm" onclick="window.location.href='player.html'" title="Open full player">Full</button>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/player.js"></script>
+  <script>
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, function (character) {
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        }[character];
+      });
+    }
+
+    function playArtistStarter(trackId) {
+      if (typeof window.playTrackById === "function") {
+        window.playTrackById(trackId);
+      }
+    }
+
+    function renderArtistSpotlight() {
+      const spotlight = document.getElementById("artist-spotlight");
+      if (!spotlight || !window.awaazData || !window.awaazData.artists.length) {
+        return;
+      }
+
+      const selectedSlug = window.location.hash.replace(/^#/, "");
+      const artist = window.awaazData.artists.find(function (item) {
+        return item.slug === selectedSlug;
+      }) || window.awaazData.artists[0];
+
+      spotlight.innerHTML = [
+        '<div class="artist-spotlight-top">',
+        '<div class="artist-avatar" style="background:',
+        artist.palette,
+        ';">',
+        escapeHtml(artist.badge),
+        "</div>",
+        "<div>",
+        '<div class="artist-name">',
+        escapeHtml(artist.name),
+        "</div>",
+        '<div class="artist-genre">',
+        escapeHtml(artist.genre),
+        "</div>",
+        "</div>",
+        "</div>",
+        '<p class="artist-spotlight-copy">',
+        escapeHtml(artist.description),
+        "</p>",
+        '<div class="page-actions">',
+        '<button class="btn-primary" type="button" data-track-id="',
+        escapeHtml(artist.featuredTrackId),
+        '">Play starter track</button>',
+        '<a class="back-link" href="player.html">Open full player</a>',
+        "</div>",
+      ].join("");
+
+      const playButton = spotlight.querySelector(".btn-primary");
+      if (playButton) {
+        playButton.addEventListener("click", function () {
+          playArtistStarter(playButton.dataset.trackId);
+        });
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      renderArtists("artist-grid");
+      renderArtistSpotlight();
+    });
+
+    window.addEventListener("hashchange", renderArtistSpotlight);
+  </script>
+</body>
+</html>

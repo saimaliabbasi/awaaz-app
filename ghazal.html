@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Awaaz | Ghazal and Nazm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/player.css" />
+  <link rel="stylesheet" href="css/urdu.css" />
+</head>
+<body class="subpage-body">
+  <main class="subpage-shell">
+    <section class="page-panel">
+      <div class="page-nav">
+        <a class="back-link" href="index.html">&larr; Back to home</a>
+        <div class="page-actions">
+          <a class="back-link" href="artist.html">Artists</a>
+          <a class="back-link" href="player.html">Full player</a>
+        </div>
+      </div>
+
+      <div class="page-kicker">Poetry room</div>
+      <h1 class="page-title">Ghazal and Nazm</h1>
+      <p class="page-copy">The missing poetry page is restored with a simple reading surface and the same shared player controls used on the home page.</p>
+
+      <div class="page-grid">
+        <article class="page-card quote-card">
+          <div class="ghazal-preview-badge">Featured ghazal</div>
+          <div class="quote-line">Dil hi to hai na sang-o-khisht, dard se bhar na aaye kyun.</div>
+          <div class="quote-meta">Mirza Ghalib</div>
+          <p class="quote-translation">The heart is still only a heart, not stone or brick. Why would it not fill with pain?</p>
+        </article>
+
+        <aside class="page-card">
+          <div class="section-header">
+            <h2 class="section-title">Reading notes</h2>
+          </div>
+          <p class="artist-spotlight-copy">This route no longer throws a 404. It gives the rest of the prototype somewhere stable to send poetry-related links while the larger catalogue is being built.</p>
+          <div class="pill-row" style="margin-top: 18px;">
+            <span class="pill">Roman script</span>
+            <span class="pill">Shared player</span>
+            <span class="pill">Working navigation</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="player-bar" id="player-bar">
+    <div class="player-track">
+      <div class="player-thumb" id="player-thumb">
+        <div class="thumb-spin"></div>
+      </div>
+      <div class="player-track-info">
+        <span class="player-song" id="player-song">Pasoori</span>
+        <span class="player-artist" id="player-artist">Ali Sethi and Shae Gill</span>
+      </div>
+    </div>
+    <div class="player-controls">
+      <button class="ctrl-btn" onclick="prevTrack()" title="Previous">&#9664;</button>
+      <button class="ctrl-btn play-pause-btn" id="play-pause-btn" onclick="togglePlay()" title="Play or pause">&#9654;</button>
+      <button class="ctrl-btn" onclick="nextTrack()" title="Next">&#9654;&#9654;</button>
+    </div>
+    <div class="player-progress-wrap">
+      <span class="time-label" id="time-current">0:00</span>
+      <div class="progress-bar" id="progress-bar" onclick="seekTrack(event)">
+        <div class="progress-fill" id="progress-fill"></div>
+        <div class="progress-thumb" id="progress-thumb"></div>
+      </div>
+      <span class="time-label" id="time-total">0:00</span>
+    </div>
+    <div class="player-extra">
+      <button class="ctrl-btn-sm" onclick="toggleLike()" id="like-btn" title="Like">Like</button>
+      <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80" oninput="setVolume(this.value)" />
+      <button class="ctrl-btn-sm" onclick="window.location.href='player.html'" title="Open full player">Full</button>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/player.js"></script>
+</body>
+</html>

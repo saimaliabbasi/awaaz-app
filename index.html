@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Awaaz — آواز</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&family=Cinzel:wght@500;700&family=Lora:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#060a12;--bg2:#0c1220;--bg3:#111827;--card:#10172a;--card2:#182033;
+  --g:#00c853;--g2:#00a040;--gold:#d4a017;--gold2:#e8bc38;
+  --tx:#f2eddf;--tx2:#8a92a8;--tx3:#44506a;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --sw:240px;--ph:76px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;min-height:100vh}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+
+/* Focus states for accessibility */
+:focus-visible {
+  outline: 2px solid var(--g);
+  outline-offset: 2px;
+}
+.search-input:focus-visible { outline: none; }
+
+/* ───────── GEOMETRIC PATTERN ───────── */
+.geo-bg{position:fixed;top:0;right:0;width:60%;height:100%;pointer-events:none;z-index:0;opacity:.025}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  position:fixed;left:0;top:0;width:var(--sw);
+  height:calc(100vh - var(--ph));
+  background:linear-gradient(180deg,#03060d 0%,#04080f 100%);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:100;overflow-y:auto;
+}
+.logo{padding:26px 22px 20px;border-bottom:1px solid var(--border)}
+.logo-en{font-family:'Cinzel',serif;font-size:22px;font-weight:700;letter-spacing:3px;color:var(--g)}
+.logo-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:17px;color:var(--gold);direction:rtl;display:block;margin-top:2px;line-height:1.6}
+.logo-tag{font-size:10px;color:var(--tx3);letter-spacing:1.5px;margin-top:4px}
+.nav{padding:12px 0;flex:1}
+.nav-lbl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tx3);padding:14px 22px 5px}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:9px 22px;
+  color:var(--tx2);cursor:pointer;transition:all .18s;
+  border-left:2px solid transparent;font-size:13px;
+}
+.nav-item:hover{color:var(--tx);background:rgba(255,255,255,0.03)}
+.nav-item.active{color:var(--g);border-left-color:var(--g);background:rgba(0,200,83,0.07)}
+.nav-icon{width:18px;text-align:center;font-size:15px;flex-shrink:0}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* ───────── MAIN ───────── */
+.main{margin-left:var(--sw);margin-bottom:var(--ph);min-height:calc(100vh - var(--ph));position:relative;z-index:1}
+.page{display:none}
+.page.active{display:block}
+
+/* ───────── TOP BAR & SEARCH ───────── */
+.phead{
+  padding:30px 34px 20px;
+  background:linear-gradient(180deg,rgba(6,10,18,.95) 0%,transparent 100%);
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(24px);
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.phead-title{font-family:'Cinzel',serif;font-size:26px;font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(125deg,#f2eddf 0%,#d4a017 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.phead-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:15px;color:var(--tx2);direction:rtl;margin-top:3px;line-height:1.8}
+.search-box{
+  background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;
+  padding:8px 16px;display:flex;align-items:center;gap:8px;width:240px;
+  transition:all .2s;
+}
+.search-box:focus-within{background:rgba(255,255,255,0.08);border-color:var(--g)}
+.search-input{background:none;border:none;color:var(--tx);font-size:13px;width:100%;outline:none}
+.search-input::placeholder{color:var(--tx3)}
+
+/* ───────── CONTENT ───────── */
+.content{padding:4px 34px 48px}
+.section{margin-bottom:38px}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.sec-title{font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:2px;color:var(--tx);display:flex;align-items:center;gap:10px}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border) 0%,transparent 100%);max-width:120px}
+.sec-more{font-size:11px;color:var(--g);cursor:pointer;letter-spacing:.5px;opacity:.8;transition:opacity .2s;background:none;border:none;font-family:inherit;}
+.sec-more:hover{opacity:1}
+
+/* ───────── HERO BANNER ───────── */
+.hero{
+  background:linear-gradient(135deg,#0f1a08 0%,#0a1200 40%,#1a1000 100%);
+  border:1px solid rgba(212,160,23,.2);border-radius:20px;
+  padding:32px 36px;display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:38px;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;right:-60px;top:-60px;
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,160,23,.12) 0%,transparent 70%);
+}
+.hero::after{
+  content:'';position:absolute;left:0;top:0;width:100%;height:100%;
+  background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='none' stroke='rgba(212,160,23,0.04)' stroke-width='1'/%3E%3C/svg%3E");
+  opacity:.4;
+}
+.hero-content{position:relative;z-index:1}
+.hero-eyebrow{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.hero-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--tx);margin-bottom:5px}
+.hero-sub{font-size:13px;color:var(--tx2);margin-bottom:18px}
+.hero-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:15px;color:var(--gold2);direction:rtl;display:block;margin-top:4px}
+.hero-btn{
+  background:var(--gold);color:#0a0600;border:none;
+  padding:11px 28px;border-radius:100px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;letter-spacing:.5px;position:relative;z-index:1;
+  transition:all .2s;
+}
+.hero-btn:hover{background:var(--gold2);transform:translateY(-1px)}
+
+/* ───────── MOODS ───────── */
+.moods{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.mood{
+  background:var(--card);border-radius:14px;padding:18px 12px 16px;
+  cursor:pointer;transition:all .28s cubic-bezier(.4,0,.2,1);
+  border:1px solid var(--border);text-align:center;position:relative;overflow:hidden;
+}
+.mood::after{
+  content:'';position:absolute;inset:0;border-radius:14px;
+  opacity:0;transition:opacity .28s;
+}
+.mood:hover{transform:translateY(-5px) scale(1.02);border-color:var(--border2)}
+.mood:hover::after{opacity:1}
+.dard::after{background:radial-gradient(circle at 50% -20%,rgba(180,30,60,.3) 0%,transparent 65%)}
+.ishq::after{background:radial-gradient(circle at 50% -20%,rgba(220,60,140,.3) 0%,transparent 65%)}
+.jashn::after{background:radial-gradient(circle at 50% -20%,rgba(212,160,23,.3) 0%,transparent 65%)}
+.sukoon::after{background:radial-gradient(circle at 50% -20%,rgba(30,100,200,.3) 0%,transparent 65%)}
+.junoon::after{background:radial-gradient(circle at 50% -20%,rgba(0,200,83,.3) 0%,transparent 65%)}
+.mood-ico{font-size:26px;margin-bottom:9px;display:block;position:relative;z-index:1}
+.mood-en{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:3px;letter-spacing:.5px;position:relative;z-index:1}
+.mood-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:17px;direction:rtl;display:block;margin-bottom:3px;position:relative;z-index:1;line-height:1.8}
+.mood-hint{font-size:10px;color:var(--tx3);position:relative;z-index:1}
+.dard .mood-ur{color:#e05070}.ishq .mood-ur{color:#e070c0}
+.jashn .mood-ur{color:var(--gold)}.sukoon .mood-ur{color:#5090e0}
+.junoon .mood-ur{color:var(--g)}
+
+/* ───────── TRACK CARDS ───────── */
+.tracks{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.tcard{
+  background:var(--card);border-radius:12px;overflow:hidden;
+  cursor:pointer;transition:all .2s;border:1px solid var(--border);
+}
+.tcard:hover{background:var(--card2);transform:translateY(-3px);border-color:var(--border2)}
+.tcard-art{
+  width:100%;aspect-ratio:1;background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;font-size:44px;
+  position:relative;
+}
+.tcard-art-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.05) 0%,transparent 70%);
+}
+.tcard-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.5);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+}
+.tcard:hover .tcard-overlay{opacity:1}
+.tcard-playbtn{
+  width:46px;height:46px;background:var(--g);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  color:#000;font-weight:bold;padding-left:3px;
+  transform:scale(.8);transition:transform .2s;
+}
+.tcard:hover .tcard-playbtn{transform:scale(1)}
+.tcard-info{padding:11px 12px}
+.tcard-name{font-size:13px;font-weight:500;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcard-artist{font-size:12px;color:var(--tx2);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcard-meta{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--tx3)}
+.tag{
+  background:rgba(0,200,83,.1);color:var(--g);
+  padding:2px 8px;border-radius:20px;font-size:10px;letter-spacing:.3px;
+}
+.tag.gold{background:rgba(212,160,23,.12);color:var(--gold)}
+.tag.dard-tag{background:rgba(180,30,60,.12);color:#e05070}
+.tag.sufi{background:rgba(100,60,180,.12);color:#a080e0}
+
+/* ───────── GHAZAL PAGE ───────── */
+.ghazal-intro{
+  background:var(--card);border-radius:16px;padding:24px 28px;
+  border:1px solid rgba(212,160,23,.2);margin-bottom:28px;
+  display:flex;align-items:center;gap:20px;
+}
+.ghazal-icon{font-size:48px;flex-shrink:0}
+.ghazal-intro-title{font-family:'Cinzel',serif;font-size:18px;color:var(--gold);margin-bottom:5px}
+.ghazal-intro-sub{font-size:13px;color:var(--tx2);line-height:1.6}
+.ghazals{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.gcard{
+  background:var(--card);border-radius:16px;padding:24px;
+  border:1px solid var(--border);border-left:3px solid var(--gold);
+  cursor:pointer;transition:all .2s;
+}
+.gcard:hover{background:var(--card2);transform:translateX(3px)}
+.gpoet{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.gpoet::before{content:'';width:20px;height:1px;background:var(--gold);opacity:.5}
+.gsher{
+  font-family:'Noto Nastaliq Urdu',serif;font-size:19px;
+  color:var(--tx);direction:rtl;line-height:2.2;margin-bottom:14px;
+}
+.groman{
+  font-family:'Lora',serif;font-style:italic;font-size:13px;
+  color:var(--tx2);line-height:1.8;border-top:1px solid var(--border);padding-top:12px;margin-bottom:8px;
+}
+.gtrans{font-size:11px;color:var(--tx3);line-height:1.6}
+.gplay{
+  margin-top:14px;background:rgba(212,160,23,.08);border:1px solid rgba(212,160,23,.2);
+  color:var(--gold);padding:8px 16px;border-radius:8px;
+  font-size:11px;cursor:pointer;transition:all .2s;letter-spacing:.5px;
+  font-family:'DM Sans',sans-serif;
+}
+.gplay:hover{background:rgba(212,160,23,.15)}
+
+/* ───────── ARTISTS PAGE ───────── */
+.artists-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.acard{text-align:center;cursor:pointer;transition:all .2s;padding:8px}
+.acard:hover .avatar{border-color:var(--g);transform:scale(1.06)}
+.avatar{
+  width:100%;aspect-ratio:1;border-radius:50%;
+  background:var(--bg3);border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;margin-bottom:10px;transition:all .25s;position:relative;overflow:hidden;
+}
+.avatar-glow{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.07) 0%,transparent 70%);
+}
+.aname{font-size:12px;font-weight:500;line-height:1.3}
+.agenre{font-size:10px;color:var(--tx3);margin-top:3px}
+
+/* ───────── CURRENTLY PLAYING ROW ───────── */
+.now-playing-bar{
+  background:linear-gradient(90deg,rgba(0,200,83,.06) 0%,transparent 60%);
+  border:1px solid rgba(0,200,83,.15);border-radius:12px;
+  padding:14px 18px;display:flex;align-items:center;gap:16px;margin-bottom:28px;
+}
+.np-dot{width:8px;height:8px;border-radius:50%;background:var(--g);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,200,83,.4)}50%{box-shadow:0 0 0 6px rgba(0,200,83,0)}}
+.np-label{font-size:11px;color:var(--g);letter-spacing:1px;text-transform:uppercase}
+.np-track{font-size:13px;font-weight:500}
+.np-artist{font-size:12px;color:var(--tx2)}
+.bars{display:flex;align-items:flex-end;gap:2px;height:18px;margin-left:auto}
+.bar{width:3px;background:var(--g);border-radius:1px;animation:barz .7s ease-in-out infinite}
+.bar:nth-child(2){animation-delay:.12s;}.bar:nth-child(3){animation-delay:.24s;}
+@keyframes barz{0%,100%{height:4px}50%{height:14px}}
+
+/* ───────── PLAYER ───────── */
+.player{
+  position:fixed;bottom:0;left:0;right:0;height:var(--ph);
+  background:rgba(4,6,12,.96);border-top:1px solid var(--border);
+  backdrop-filter:blur(30px);display:flex;align-items:center;
+  padding:0 20px;gap:20px;z-index:200;
+}
+.pl-track{display:flex;align-items:center;gap:13px;width:240px;flex-shrink:0}
+.pl-art{
+  width:44px;height:44px;border-radius:8px;background:var(--card2);
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+}
+.pl-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.pl-artist{font-size:11px;color:var(--tx2);margin-top:2px}
+.pl-heart{color:var(--tx3);cursor:pointer;font-size:14px;margin-left:auto;transition:color .2s;background:none;border:none;}
+.pl-heart:hover{color:#e05070}
+.pl-controls{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px}
+.ctrl-row{display:flex;align-items:center;gap:18px}
+.cbtn{
+  background:none;border:none;color:var(--tx2);cursor:pointer;
+  font-size:16px;padding:4px;transition:color .2s;line-height:1;
+}
+.cbtn:hover{color:var(--tx)}
+.cbtn svg{width:16px;height:16px;fill:currentColor}
+.playpause{
+  width:34px;height:34px;background:var(--tx);border:none;border-radius:50%;
+  color:#0a0a0a;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:all .15s;padding-left:2px;
+}
+.playpause.playing{padding-left:0}
+.playpause:hover{background:var(--g);transform:scale(1.06)}
+.prog{display:flex;align-items:center;gap:9px;width:100%;max-width:480px}
+.time{font-size:10px;color:var(--tx3);font-variant-numeric:tabular-nums;min-width:28px}
+.progbar{
+  flex:1;height:3px;background:rgba(255,255,255,.1);border-radius:2px;
+  cursor:pointer;position:relative;transition:height .2s;
+}
+.progbar:hover{height:5px}
+.progfill{height:100%;background:var(--g);border-radius:2px;transition:width .1s linear;position:relative}
+.progfill::after{
+  content:'';position:absolute;right:-5px;top:50%;transform:translateY(-50%);
+  width:10px;height:10px;border-radius:50%;background:var(--g);
+  opacity:0;transition:opacity .2s;
+}
+.progbar:hover .progfill::after{opacity:1}
+.pl-right{width:180px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:14px}
+.vol{display:flex;align-items:center;gap:7px;color:var(--tx3);font-size:13px}
+.volbar{width:70px;height:3px;background:rgba(255,255,255,.12);border-radius:2px;cursor:pointer}
+.volfill{height:100%;width:70%;background:rgba(255,255,255,.4);border-radius:2px}
+
+/* ───────── COKE STUDIO TAB ───────── */
+.cs-header{
+  background:linear-gradient(135deg,#0d0000 0%,#1a0000 40%,#0d0500 100%);
+  border-radius:16px;padding:28px 32px;margin-bottom:28px;
+  border:1px solid rgba(220,20,20,.2);position:relative;overflow:hidden;
+}
+.cs-header::before{content:'';position:absolute;right:-40px;bottom:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(220,20,20,.15) 0%,transparent 70%)}
+.cs-logo{font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:#fff;letter-spacing:2px}
+.cs-logo span{color:#cc1111}
+.cs-seasons{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.cs-season{
+  background:rgba(0,0,0,.4);border-radius:10px;padding:16px;
+  border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:all .2s;text-align:center;
+}
+.cs-season:hover{border-color:rgba(220,20,20,.3);background:rgba(220,20,20,.07)}
+.cs-snum{font-family:'Cinzel',serif;font-size:13px;color:#cc1111;margin-bottom:4px}
+.cs-syear{font-size:11px;color:var(--tx2)}
+.cs-shits{font-size:10px;color:var(--tx3);margin-top:4px}
+
+/* ───────── STATS BAR ───────── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.stat-card{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--border);text-align:center}
+.stat-n{font-family:'Cinzel',serif;font-size:22px;color:var(--g);margin-bottom:3px}
+.stat-l{font-size:11px;color:var(--tx2)}
+.stat-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:13px;color:var(--gold);direction:rtl;display:block;margin-top:2px}
+
+/* ───────── SCROLLABLE PLAYLIST ───────── */
+.playlist{display:flex;flex-direction:column;gap:2px}
+.prow{
+  display:flex;align-items:center;gap:14px;padding:9px 14px;border-radius:8px;
+  cursor:pointer;transition:all .15s;
+}
+.prow:hover{background:var(--card2)}
+.prow.playing{background:rgba(0,200,83,.07)}
+.prow-num{width:24px;text-align:right;font-size:12px;color:var(--tx3);font-variant-numeric:tabular-nums;flex-shrink:0}
+.prow-ico{font-size:20px;flex-shrink:0}
+.prow-info{flex:1;min-width:0}
+.prow-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow-name.playing-name{color:var(--g)}
+.prow-artist{font-size:11px;color:var(--tx2)}
+.prow-dur{font-size:11px;color:var(--tx3);flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- Islamic geometric pattern -->
+<svg class="geo-bg" aria-hidden="true" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <pattern id="geo" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#d4a017" stroke-width="0.8">
+        <polygon points="40,5 48,26 70,18 58,36 75,48 54,48 54,72 40,58 26,72 26,48 5,48 22,36 10,18 32,26"/>
+        <polygon points="40,14 46,28 62,22 53,34 65,42 50,42 50,62 40,52 30,62 30,42 15,42 27,34 18,22 34,28"/>
+        <circle cx="40" cy="40" r="8"/>
+        <rect x="32" y="32" width="16" height="16" transform="rotate(45,40,40)"/>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="500" height="500" fill="url(#geo)"/>
+</svg>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" aria-label="Sidebar Navigation">
+  <div class="logo">
+    <div class="logo-en">AWAAZ</div>
+    <span class="logo-ur">آواز</span>
+    <div class="logo-tag">PAKISTANI MUSIC PLATFORM</div>
+  </div>
+  <nav class="nav" aria-label="Main Navigation">
+    <div class="nav-lbl">Discover</div>
+    <div class="nav-item active" id="nav-home" role="button" tabindex="0" onclick="goPage('home',this)" onkeypress="if(event.key==='Enter')goPage('home',this)">
+      <span class="nav-icon" aria-hidden="true">🏠</span> Home
+    </div>
+    <div class="nav-item" id="nav-ghazal" role="button" tabindex="0" onclick="goPage('ghazal',this)" onkeypress="if(event.key==='Enter')goPage('ghazal',this)">
+      <span class="nav-icon" aria-hidden="true">📜</span> Ghazal & Poetry
+    </div>
+    <div class="nav-item" id="nav-artists" role="button" tabindex="0" onclick="goPage('artists',this)" onkeypress="if(event.key==='Enter')goPage('artists',this)">
+      <span class="nav-icon" aria-hidden="true">🎤</span> Artists
+    </div>
+    <div class="nav-item" id="nav-coke" role="button" tabindex="0" onclick="goPage('coke',this)" onkeypress="if(event.key==='Enter')goPage('coke',this)">
+      <span class="nav-icon" aria-hidden="true">🎬</span> Coke Studio
+    </div>
+    <div class="nav-lbl">Library</div>
+    <div class="nav-item" role="button" tabindex="0"><span class="nav-icon" aria-hidden="true">❤️</span> Liked Songs</div>
+    <div class="nav-item" role="button" tabindex="0"><span class="nav-icon" aria-hidden="true">📁</span> Playlists</div>
+    <div class="nav-item" role="button" tabindex="0"><span class="nav-icon" aria-hidden="true">🕰</span> Recently Played</div>
+    <div class="nav-lbl">Moods</div>
+    <div class="nav-item" role="button" tabindex="0" style="color:#e05070" onclick="filterMood('dard')" onkeypress="if(event.key==='Enter')filterMood('dard')">
+      <span class="nav-dot" aria-hidden="true" style="background:#e05070"></span>درد — Dard
+    </div>
+    <div class="nav-item" role="button" tabindex="0" style="color:#e070c0" onclick="filterMood('ishq')" onkeypress="if(event.key==='Enter')filterMood('ishq')">
+      <span class="nav-dot" aria-hidden="true" style="background:#e070c0"></span>عشق — Ishq
+    </div>
+    <div class="nav-item" role="button" tabindex="0" style="color:#d4a017" onclick="filterMood('jashn')" onkeypress="if(event.key==='Enter')filterMood('jashn')">
+      <span class="nav-dot" aria-hidden="true" style="background:#d4a017"></span>جشن — Jashn
+    </div>
+    <div class="nav-item" role="button" tabindex="0" style="color:#5090e0" onclick="filterMood('sukoon')" onkeypress="if(event.key==='Enter')filterMood('sukoon')">
+      <span class="nav-dot" aria-hidden="true" style="background:#5090e0"></span>سکون — Sukoon
+    </div>
+    <div class="nav-item" role="button" tabindex="0" style="color:#00c853" onclick="filterMood('junoon')" onkeypress="if(event.key==='Enter')filterMood('junoon')">
+      <span class="nav-dot" aria-hidden="true" style="background:#00c853"></span>جنون — Junoon
+    </div>
+  </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main" aria-label="Main Content">
+
+  <!-- ═══ HOME ═══ -->
+  <div id="page-home" class="page active">
+    <div class="phead">
+      <div class="phead-left">
+        <h1 class="phead-title" id="greet-title">Good Evening</h1>
+        <div class="phead-ur">آج کیا سننا چاہتے ہیں؟</div>
+      </div>
+      <div class="search-box">
+        <span aria-hidden="true" style="color:var(--tx3);font-size:13px">🔍</span>
+        <input type="text" class="search-input" id="search-input" aria-label="Search songs or artists" placeholder="Search songs..." oninput="handleSearch(this.value)">
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- Search Results (hidden by default) -->
+      <div class="section" id="search-results-section" style="display:none" aria-live="polite">
+        <div class="sec-hd">
+          <div class="sec-title">SEARCH RESULTS <div class="sec-line"></div></div>
+          <button class="sec-more" onclick="clearSearch()" aria-label="Clear Search">Clear ✕</button>
+        </div>
+        <div class="playlist" id="search-results-list"></div>
+      </div>
+
+      <!-- Now playing bar (hidden until a track plays) -->
+      <div class="now-playing-bar" id="np-bar" style="display:none" aria-live="polite">
+        <div class="np-dot" aria-hidden="true"></div>
+        <div class="np-label">Now Playing</div>
+        <div>
+          <div class="np-track" id="np-track-name">—</div>
+          <div class="np-artist" id="np-track-artist">—</div>
+        </div>
+        <div class="bars" aria-hidden="true"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+      </div>
+
+      <!-- Hero Banner -->
+      <div class="hero" role="region" aria-label="Featured content">
+        <div class="hero-content">
+          <div class="hero-eyebrow">✦ NOW STREAMING</div>
+          <div class="hero-title">Coke Studio Season 15</div>
+          <span class="hero-ur">کوک اسٹوڈیو سیزن ۱۵</span>
+          <div class="hero-sub" style="margin-top:8px">New episodes every Friday · HD Audio · Dolby Atmos</div>
+          <button class="hero-btn" aria-label="Play Coke Studio Season 15" onclick="goPage('coke', document.getElementById('nav-coke'))">
+            ▶ Play Season 15
+          </button>
+        </div>
+        <div aria-hidden="true" style="font-size:90px;opacity:.2;line-height:1;flex-shrink:0;position:relative;z-index:1">🎵</div>
+      </div>
+
+      <!-- Moods -->
+      <div class="section">
+        <div class="sec-hd">
+          <div class="sec-title">DESI MOODS <div class="sec-line"></div></div>
+          <div class="sec-title" style="font-family:'Noto Nastaliq Urdu',serif;letter-spacing:0;direction:rtl;font-size:14px;color:var(--gold)">دیسی موڈز</div>
+        </div>
+        <div class="moods">
+          <div class="mood dard" role="button" tabindex="0" aria-label="Dard Mood" onclick="filterMood('dard')" onkeypress="if(event.key==='Enter')filterMood('dard')">
+            <span class="mood-ico" aria-hidden="true">💔</span>
+            <div class="mood-en">DARD</div>
+            <span class="mood-ur">درد</span>
+            <div class="mood-hint">heartbreak & pain</div>
+          </div>
+          <div class="mood ishq" role="button" tabindex="0" aria-label="Ishq Mood" onclick="filterMood('ishq')" onkeypress="if(event.key==='Enter')filterMood('ishq')">
+            <span class="mood-ico" aria-hidden="true">❤️</span>
+            <div class="mood-en">ISHQ</div>
+            <span class="mood-ur">عشق</span>
+            <div class="mood-hint">love & longing</div>
+          </div>
+          <div class="mood jashn" role="button" tabindex="0" aria-label="Jashn Mood" onclick="filterMood('jashn')" onkeypress="if(event.key==='Enter')filterMood('jashn')">
+            <span class="mood-ico" aria-hidden="true">🎉</span>
+            <div class="mood-en">JASHN</div>
+            <span class="mood-ur">جشن</span>
+            <div class="mood-hint">celebration & joy</div>
+          </div>
+          <div class="mood sukoon" role="button" tabindex="0" aria-label="Sukoon Mood" onclick="filterMood('sukoon')" onkeypress="if(event.key==='Enter')filterMood('sukoon')">
+            <span class="mood-ico" aria-hidden="true">🌙</span>
+            <div class="mood-en">SUKOON</div>
+            <span class="mood-ur">سکون</span>
+            <div class="mood-hint">peace & calm</div>
+          </div>
+          <div class="mood junoon" role="button" tabindex="0" aria-label="Junoon Mood" onclick="filterMood('junoon')" onkeypress="if(event.key==='Enter')filterMood('junoon')">
+            <span class="mood-ico" aria-hidden="true">🔥</span>
+            <div class="mood-en">JUNOON</div>
+            <span class="mood-ur">جنون</span>
+            <div class="mood-hint">passion & fire</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Tracks -->
+      <div class="section" id="featured-section">
+        <div class="sec-hd">
+          <div class="sec-title">FEATURED TRACKS <div class="sec-line"></div></div>
+        </div>
+        <div class="tracks" id="tracks-grid"></div>
+      </div>
+
+      <!-- Full playlist -->
+      <div class="section" id="trending-section">
+        <div class="sec-hd">
+          <div class="sec-title">TRENDING NOW <div class="sec-line"></div></div>
+        </div>
+        <div class="playlist" id="playlist-rows"></div>
+      </div>
+
+      <!-- Artists strip -->
+      <div class="section">
+        <div class="sec-hd">
+          <div class="sec-title">POPULAR ARTISTS <div class="sec-line"></div></div>
+          <button class="sec-more" aria-label="See all artists" onclick="goPage('artists', document.getElementById('nav-artists'))">See all →</button>
+        </div>
+        <div class="artists-grid" id="home-artists"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ GHAZAL ═══ -->
+  <div id="page-ghazal" class="page">
+    <div class="phead">
+      <div class="phead-left">
+        <h2 class="phead-title">Ghazal & Poetry</h2>
+        <div class="phead-ur">غزل اور نظم</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="ghazal-intro">
+        <div class="ghazal-icon" aria-hidden="true">📜</div>
+        <div>
+          <div class="ghazal-intro-title">The Art of Urdu Poetry</div>
+          <div class="ghazal-intro-sub">From Mir Taqi Mir to Faiz Ahmed Faiz — explore the soul of the subcontinent through ghazals, nazms, and qawwali. Each verse carries centuries of love, pain, and longing.</div>
+        </div>
+      </div>
+      <div class="sec-hd"><div class="sec-title">CLASSIC GHAZALS <div class="sec-line"></div></div></div>
+      <div class="ghazals" id="ghazal-grid"></div>
+    </div>
+  </div>
+
+  <!-- ═══ ARTISTS ═══ -->
+  <div id="page-artists" class="page">
+    <div class="phead">
+      <div class="phead-left">
+        <h2 class="phead-title">Pakistani Artists</h2>
+        <div class="phead-ur">پاکستانی فنکار</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="stats" id="stats-bar">
+        <div class="stat-card"><div class="stat-n">1.2K</div><div class="stat-l">Artists</div><span class="stat-ur">فنکار</span></div>
+        <div class="stat-card"><div class="stat-n">48K</div><div class="stat-l">Songs</div><span class="stat-ur">گانے</span></div>
+        <div class="stat-card"><div class="stat-n">320</div><div class="stat-l">Albums</div><span class="stat-ur">البم</span></div>
+        <div class="stat-card"><div class="stat-n">15</div><div class="stat-l">Genres</div><span class="stat-ur">انواع</span></div>
+      </div>
+      <div class="sec-hd"><div class="sec-title">ALL ARTISTS <div class="sec-line"></div></div></div>
+      <div class="artists-grid" id="all-artists"></div>
+    </div>
+  </div>
+
+  <!-- ═══ COKE STUDIO ═══ -->
+  <div id="page-coke" class="page">
+    <div class="phead">
+      <div class="phead-left">
+        <h2 class="phead-title">Coke Studio</h2>
+        <div class="phead-ur">کوک اسٹوڈیو</div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="cs-header">
+        <div class="cs-logo">COKE <span>STUDIO</span></div>
+        <div style="font-size:13px;color:var(--tx2);margin-top:6px">Pakistan's premier live music recording platform since 2008</div>
+        <div class="cs-seasons">
+          <div class="cs-season" role="button" tabindex="0" aria-label="Play Season 15" onclick="playTrack(12)" onkeypress="if(event.key==='Enter')playTrack(12)"><div class="cs-snum">Season 15</div><div class="cs-syear">2023</div><div class="cs-shits">12 Episodes · 24 Songs</div></div>
+          <div class="cs-season" role="button" tabindex="0" aria-label="Play Season 14" onclick="playTrack(16)" onkeypress="if(event.key==='Enter')playTrack(16)"><div class="cs-snum">Season 14</div><div class="cs-syear">2022</div><div class="cs-shits">10 Episodes · 20 Songs</div></div>
+          <div class="cs-season"><div class="cs-snum">Season 13</div><div class="cs-syear">2020</div><div class="cs-shits">8 Episodes · 16 Songs</div></div>
+          <div class="cs-season" role="button" tabindex="0" aria-label="Play Season 12" onclick="playTrack(17)" onkeypress="if(event.key==='Enter')playTrack(17)"><div class="cs-snum">Season 12</div><div class="cs-syear">2019</div><div class="cs-shits">10 Episodes · 22 Songs</div></div>
+        </div>
+      </div>
+      <div class="sec-hd"><div class="sec-title">ICONIC COKE STUDIO SONGS <div class="sec-line"></div></div></div>
+      <div class="playlist" id="cs-playlist"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- PLAYER -->
+<div class="player" role="region" aria-label="Audio Player">
+  <div class="pl-track">
+    <div class="pl-art" id="pl-art" aria-hidden="true">🎵</div>
+    <div style="min-width:0">
+      <div class="pl-name" id="pl-name" aria-live="polite">Select a track</div>
+      <div class="pl-artist" id="pl-artist">آواز Music</div>
+    </div>
+    <button class="pl-heart" id="pl-heart" aria-label="Like Track" onclick="toggleHeart()">♡</button>
+  </div>
+  <div class="pl-controls">
+    <div class="ctrl-row">
+      <button class="cbtn" aria-label="Shuffle">⇌</button>
+      <button class="cbtn" onclick="prevTrack()" aria-label="Previous Track">⏮</button>
+      <button class="playpause" id="pp-btn" onclick="togglePlay()" aria-label="Play or Pause">▶</button>
+      <button class="cbtn" onclick="nextTrack()" aria-label="Next Track">⏭</button>
+      <button class="cbtn" aria-label="Repeat">↻</button>
+    </div>
+    <div class="prog">
+      <span class="time" id="t-cur" aria-label="Time Elapsed">0:00</span>
+      <div class="progbar" id="progbar" role="slider" aria-label="Seek track" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0" onclick="seekTo(event,this)" onkeydown="if(event.key==='ArrowRight'){prog=Math.min(100,prog+5);document.getElementById('progfill').style.width=prog+'%';}if(event.key==='ArrowLeft'){prog=Math.max(0,prog-5);document.getElementById('progfill').style.width=prog+'%';}">
+        <div class="progfill" id="progfill" style="width:0%"></div>
+      </div>
+      <span class="time" id="t-tot" aria-label="Total Time">—</span>
+    </div>
+  </div>
+  <div class="pl-right">
+    <div class="vol">
+      <span style="font-size:13px" aria-hidden="true">🔊</span>
+      <div class="volbar" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70" tabindex="0" onclick="setVol(event,this)"><div class="volfill" id="volfill"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── SECURITY: XSS PREVENTION ───────────────────────────────────────────────
+function esc(s) {
+  if (typeof s !== 'string') return s;
+  return s.replace(/[&<>"']/g, function(m) {
+    switch (m) {
+      case '&': return '&amp;';
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '"': return '&quot;';
+      case "'": return '&#039;';
+      default: return m;
+    }
+  });
+}
+
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const originalTracks = [
+  {id:0,ico:'🌺',name:'Pasoori',artist:'Ali Sethi & Shae Gill',dur:'3:46',mood:'ishq',tag:'Coke Studio',tagClass:''},
+  {id:1,ico:'🎵',name:'Tere Bina',artist:'Atif Aslam',dur:'4:12',mood:'dard',tag:'Classic',tagClass:'dard-tag'},
+  {id:2,ico:'🌙',name:'Afreen Afreen',artist:'Nusrat Fateh Ali Khan',dur:'5:28',mood:'ishq',tag:'Qawwali',tagClass:'sufi'},
+  {id:3,ico:'🔥',name:'Saeein',artist:'Jawad Ahmad',dur:'3:58',mood:'junoon',tag:'Pop',tagClass:''},
+  {id:4,ico:'💫',name:'Rabba',artist:'Rahat Fateh Ali Khan',dur:'4:30',mood:'sukoon',tag:'Sufi',tagClass:'sufi'},
+  {id:5,ico:'🎸',name:'Bohemia Da Dhol',artist:'Bohemia',dur:'3:22',mood:'junoon',tag:'Rap',tagClass:''},
+  {id:6,ico:'🌹',name:'Woh Lamhe',artist:'Atif Aslam',dur:'4:05',mood:'dard',tag:'OST',tagClass:'dard-tag'},
+  {id:7,ico:'✨',name:'Dil Dil Pakistan',artist:'Vital Signs',dur:'4:18',mood:'jashn',tag:'National',tagClass:'gold'},
+  {id:8,ico:'🌸',name:'Ko Ko Korina',artist:'Arif Lohar & Meesha Shafi',dur:'3:35',mood:'jashn',tag:'Folk',tagClass:'gold'},
+  {id:9,ico:'🌟',name:'Aaqa',artist:'Abida Parveen',dur:'6:12',mood:'sukoon',tag:'Sufi',tagClass:'sufi'},
+  {id:10,ico:'🎶',name:'Aik Alif',artist:'Noori & Saeen Zahoor',dur:'5:05',mood:'sukoon',tag:'Coke Studio',tagClass:''},
+  {id:11,ico:'💔',name:'Bin Roye',artist:'Rahat Fateh Ali Khan',dur:'4:48',mood:'dard',tag:'OST',tagClass:'dard-tag'},
+];
+
+const csTracks = [
+  {id:12,ico:'🌺',name:'Pasoori (Live)',artist:'Ali Sethi & Shae Gill',dur:'3:46',season:'S15'},
+  {id:13,ico:'🎵',name:'Rung',artist:'Abida Parveen & Rahat FARK',dur:'6:20',season:'S15'},
+  {id:14,ico:'🌙',name:'Afreen Afreen (Acoustic)',artist:'Rahat FARK & Momina',dur:'5:48',season:'S09'},
+  {id:15,ico:'✨',name:'Aik Alif (Unplugged)',artist:'Noori & Saeen Zahoor',dur:'5:05',season:'S03'},
+  {id:16,ico:'🌸',name:'Tu Jhoom',artist:'Naseebo Lal & Abida Parveen',dur:'4:33',season:'S14'},
+  {id:17,ico:'🎶',name:'Dil Dil Pakistan (CS)',artist:'Vital Signs',dur:'4:18',season:'S12'},
+];
+
+const ghazals = [
+  {id:18, poet:'Mir Taqi Mir',sher:'یاں کوئی آیا نہیں میری طرح\nورنہ سب کو ہے خبر میری طرح',roman:'Yaan koi aaya nahin meri tarah\nVarna sab ko hai khabar meri tarah',trans:'No one has come here quite like me / But everyone knows of me nonetheless',dur:'2:15'},
+  {id:19, poet:'Faiz Ahmed Faiz',sher:'ہم دیکھیں گے\nلازم ہے کہ ہم بھی دیکھیں گے',roman:'Hum dekhenge\nLazim hai ke hum bhi dekhenge',trans:'We shall see / It is destined that we too shall witness that day',dur:'3:10'},
+  {id:20, poet:'Mirza Ghalib',sher:'ہزاروں خواہشیں ایسی کہ ہر خواہش پہ دم نکلے\nبہت نکلے میرے ارمان لیکن پھر بھی کم نکلے',roman:'Hazaron khwahishen aisi ke har khwahish pe dam nikle\nBahut nikle mere armaan lekin phir bhi kam nikle',trans:'Thousands of desires, each worth dying for / Many were fulfilled, yet I still yearn for more',dur:'2:45'},
+  {id:21, poet:'Allama Iqbal',sher:'خودی کو کر بلند اتنا کہ ہر تقدیر سے پہلے\nخدا بندے سے خود پوچھے بتا تیری رضا کیا ہے',roman:'Khudi ko kar buland itna ke har taqdeer se pahle\nKhuda bande se khud puchhe bata teri raza kya hai',trans:'Raise yourself so high that before each decree of fate / God himself asks you: what is your wish?',dur:'1:50'},
+  {id:22, poet:'Parveen Shakir',sher:'خوشبو کی طرح میرے وجود کا احساس رہے\nچاہے نہ رہے یاد مری یاد کا احساس رہے',roman:'Khushbu ki tarah mere wujood ka ehsaas rahe\nChahe na rahe yaad meri yaad ka ehsaas rahe',trans:'May the sense of my existence linger like fragrance / Even if the memory fades, may the feeling of memory remain',dur:'2:30'},
+  {id:23, poet:'Ahmad Faraz',sher:'رنجش ہی سہی دل ہی دکھانے کے لیے آ\nآ پھر سے مجھے چھوڑ کے جانے کے لیے آ',roman:'Ranjish hi sahi dil hi dukhaane ke liye aa\nAa phir se mujhe chhod ke jaane ke liye aa',trans:'Come even if it\'s to cause pain, come just to break my heart / Come, even if it is only to leave me once more',dur:'3:05'},
+];
+
+const artists = [
+  {ico:'🎤',name:'Atif Aslam',genre:'Pop · Sufi'},
+  {ico:'🌟',name:'Ali Sethi',genre:'Classical · Folk'},
+  {ico:'🎵',name:'Abida Parveen',genre:'Sufi · Classical'},
+  {ico:'🌙',name:'Nusrat Fateh Ali Khan',genre:'Qawwali'},
+  {ico:'🔥',name:'Ali Zafar',genre:'Pop · Folk'},
+  {ico:'💫',name:'Rahat Fateh Ali Khan',genre:'Qawwali · Pop'},
+  {ico:'🎸',name:'Strings',genre:'Rock · Pop'},
+  {ico:'✨',name:'Vital Signs',genre:'Rock · National'},
+  {ico:'🎶',name:'Bohemia',genre:'Punjabi Rap'},
+  {ico:'🌺',name:'Shae Gill',genre:'Indie Pop'},
+  {ico:'💔',name:'Sajjad Ali',genre:'Pop · Classical'},
+  {ico:'🌸',name:'Nescafe Basement',genre:'Multi-genre'},
+];
+
+// Global tracks map for universal playback
+const tracksMap = {};
+const allPlayableIds = [];
+originalTracks.forEach(t => { tracksMap[t.id] = t; allPlayableIds.push(t.id); });
+csTracks.forEach(t => {
+  const cst = {...t, tag: t.season, tagClass: 'gold'};
+  tracksMap[cst.id] = cst;
+  allPlayableIds.push(cst.id);
+});
+ghazals.forEach(g => {
+  const gt = {id: g.id, name: 'Ghazal Recitation', artist: g.poet, dur: g.dur, ico: '📜', tag: 'Poetry', tagClass: 'sufi', mood:'sukoon'};
+  tracksMap[gt.id] = gt;
+  allPlayableIds.push(gt.id);
+});
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function renderTracks(list, container) {
+  container.innerHTML = list.map((t) => `
+    <div class="tcard" role="button" tabindex="0" aria-label="Play ${esc(t.name)} by ${esc(t.artist)}" onclick="playTrack(${t.id})" onkeypress="if(event.key==='Enter')playTrack(${t.id})">
+      <div class="tcard-art">
+        <div class="tcard-art-bg"></div>
+        <span aria-hidden="true" style="position:relative;z-index:1">${t.ico}</span>
+        <div class="tcard-overlay">
+          <div class="tcard-playbtn" aria-hidden="true">▶</div>
+        </div>
+      </div>
+      <div class="tcard-info">
+        <div class="tcard-name">${esc(t.name)}</div>
+        <div class="tcard-artist">${esc(t.artist)}</div>
+        <div class="tcard-meta"><span>${esc(t.dur)}</span><span class="tag ${t.tagClass}">${esc(t.tag)}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+function renderPlaylist(list, container, isCs = false) {
+  container.innerHTML = list.map((t,i) => {
+    const displayTag = isCs ? t.season : t.tag;
+    const tagClass = isCs ? 'gold' : t.tagClass;
+    return `
+    <div class="prow" id="prow-${t.id}" role="button" tabindex="0" aria-label="Play ${esc(t.name)} by ${esc(t.artist)}" onclick="playTrack(${t.id})" onkeypress="if(event.key==='Enter')playTrack(${t.id})">
+      <div class="prow-num">${i+1}</div>
+      <div class="prow-ico" aria-hidden="true">${t.ico}</div>
+      <div class="prow-info">
+        <div class="prow-name" id="prow-name-${t.id}">${esc(t.name)}</div>
+        <div class="prow-artist">${esc(t.artist)}</div>
+      </div>
+      <span class="tag ${tagClass}" style="flex-shrink:0">${esc(displayTag)}</span>
+      <div class="prow-dur">${esc(t.dur)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderArtists(list, container) {
+  container.innerHTML = list.map(a => `
+    <div class="acard" role="button" tabindex="0" aria-label="Artist ${esc(a.name)}">
+      <div class="avatar">
+        <div class="avatar-glow"></div>
+        <span aria-hidden="true" style="position:relative;z-index:1">${a.ico}</span>
+      </div>
+      <div class="aname">${esc(a.name)}</div>
+      <div class="agenre">${esc(a.genre)}</div>
+    </div>`).join('');
+}
+
+function renderGhazals() {
+  document.getElementById('ghazal-grid').innerHTML = ghazals.map(g => `
+    <div class="gcard" role="button" tabindex="0" aria-label="Play Ghazal by ${esc(g.poet)}" onclick="playTrack(${g.id})" onkeypress="if(event.key==='Enter')playTrack(${g.id})">
+      <div class="gpoet">${esc(g.poet)}</div>
+      <div class="gsher" aria-label="Urdu Verse">${esc(g.sher).replace(/\n/g, '<br>')}</div>
+      <div class="groman" aria-label="Roman Urdu Verse">${esc(g.roman).replace(/\n/g, '<br>')}</div>
+      <div class="gtrans" aria-label="English Translation">${esc(g.trans)}</div>
+      <button class="gplay" aria-label="Synthesize Voice Recitation" onclick="reciteGhazal(${g.id}, event)">♪ Listen to Voice Recitation</button>
+    </div>`).join('');
+}
+
+// Initial render
+renderTracks(originalTracks.slice(0,8), document.getElementById('tracks-grid'));
+renderPlaylist(originalTracks, document.getElementById('playlist-rows'));
+renderPlaylist(csTracks, document.getElementById('cs-playlist'), true);
+renderArtists(artists.slice(0,6), document.getElementById('home-artists'));
+renderArtists(artists, document.getElementById('all-artists'));
+renderGhazals();
+
+// ─── PLAYER LOGIC & VOICE ──────────────────────────────────────────────────
+let isPlaying = false, curId = null, prog = 0, totalSec = 0, timer = null, liked = false;
+
+function parseDur(d){ const [m,s] = d.split(':').map(Number); return m*60+s; }
+function fmtTime(s){ return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); }
+
+// Web Speech API for reciting Urdu poetry
+function reciteGhazal(id, e) {
+  if (e) e.stopPropagation(); // Prevent playing track
+  
+  const g = ghazals.find(x => x.id === id);
+  if (!g) return;
+
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel(); // Stop any current speech
+    
+    // Pause any music
+    if(isPlaying) togglePlay();
+
+    const utterance = new SpeechSynthesisUtterance(g.sher);
+    utterance.lang = 'ur-PK'; // Urdu Language
+    utterance.rate = 0.85; // Slower pace for poetry
+    
+    const btn = e.currentTarget;
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '🔊 Reciting now...';
+    btn.setAttribute('aria-label', 'Reciting');
+    
+    utterance.onend = () => { btn.innerHTML = originalHTML; btn.setAttribute('aria-label', 'Synthesize Voice Recitation'); };
+    utterance.onerror = () => { btn.innerHTML = originalHTML; btn.setAttribute('aria-label', 'Synthesize Voice Recitation'); };
+    
+    window.speechSynthesis.speak(utterance);
+  } else {
+    alert("Voice synthesis is not supported in your browser.");
+  }
+}
+
+function playTrack(id){
+  const t = tracksMap[id];
+  if(!t) return;
+  
+  // Stop text-to-speech if it's currently running
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+  // clear previous highlights
+  document.querySelectorAll('.prow').forEach(r => {
+    r.classList.remove('playing');
+    const nameEl = r.querySelector('.prow-name');
+    if(nameEl) nameEl.classList.remove('playing-name');
+  });
+
+  curId = id;
+  prog = 0;
+  clearInterval(timer);
+  totalSec = parseDur(t.dur);
+
+  // Update player UI
+  document.getElementById('pl-art').textContent = t.ico;
+  document.getElementById('pl-name').textContent = t.name;
+  document.getElementById('pl-artist').textContent = t.artist;
+  document.getElementById('t-tot').textContent = t.dur;
+  document.getElementById('t-cur').textContent = '0:00';
+  document.getElementById('progfill').style.width = '0%';
+  document.getElementById('progbar').setAttribute('aria-valuenow', '0');
+  
+  document.getElementById('pp-btn').textContent = '⏸';
+  document.getElementById('pp-btn').classList.add('playing');
+  document.getElementById('pl-heart').textContent = '♡';
+  document.getElementById('pl-heart').style.color = '';
+  document.getElementById('pl-heart').setAttribute('aria-label', 'Like Track');
+  liked = false;
+
+  // Now playing bar
+  const npBar = document.getElementById('np-bar');
+  npBar.style.display = 'flex';
+  document.getElementById('np-track-name').textContent = t.name;
+  document.getElementById('np-track-artist').textContent = t.artist;
+
+  // Highlight playlist row if visible
+  const rows = document.querySelectorAll('#prow-'+id);
+  rows.forEach(row => {
+    row.classList.add('playing');
+    const nameEl = row.querySelector('.prow-name');
+    if(nameEl) nameEl.classList.add('playing-name');
+  });
+
+  isPlaying = true;
+  startProgress();
+}
+
+function startProgress(){
+  clearInterval(timer);
+  const intervalMs = 200; // update 5 times per second for smooth progress
+  timer = setInterval(()=>{
+    if(!isPlaying) return;
+    prog = Math.min(prog + (100 / totalSec) * (intervalMs/1000), 100);
+    document.getElementById('progfill').style.width = prog+'%';
+    document.getElementById('progbar').setAttribute('aria-valuenow', Math.round(prog));
+    
+    const elapsed = (prog/100)*totalSec;
+    document.getElementById('t-cur').textContent = fmtTime(elapsed);
+    
+    if(prog >= 99.9){
+      clearInterval(timer);
+      nextTrack();
+    }
+  }, intervalMs);
+}
+
+function togglePlay(){
+  if(curId === null && allPlayableIds.length > 0) {
+    playTrack(allPlayableIds[0]);
+    return;
+  }
+  isPlaying = !isPlaying;
+  document.getElementById('pp-btn').textContent = isPlaying ? '⏸' : '▶';
+  document.getElementById('pp-btn').classList.toggle('playing', isPlaying);
+}
+
+function nextTrack(){
+  if(curId !== null){
+    const idx = allPlayableIds.indexOf(curId);
+    if(idx !== -1) playTrack(allPlayableIds[(idx+1) % allPlayableIds.length]);
+  }
+}
+function prevTrack(){
+  if(curId !== null){
+    const idx = allPlayableIds.indexOf(curId);
+    if(idx !== -1) playTrack(allPlayableIds[(idx-1+allPlayableIds.length) % allPlayableIds.length]);
+  }
+}
+
+function seekTo(e, el){
+  if(curId === null) return;
+  const r = el.getBoundingClientRect();
+  prog = Math.max(0, Math.min(100, (e.clientX-r.left)/r.width*100));
+  document.getElementById('progfill').style.width = prog+'%';
+  document.getElementById('progbar').setAttribute('aria-valuenow', Math.round(prog));
+  document.getElementById('t-cur').textContent = fmtTime((prog/100)*totalSec);
+}
+
+function setVol(e, el){
+  const r = el.getBoundingClientRect();
+  const vol = Math.max(0, Math.min(100, (e.clientX-r.left)/r.width*100));
+  document.getElementById('volfill').style.width = vol+'%';
+  el.setAttribute('aria-valuenow', Math.round(vol));
+}
+
+function toggleHeart(){
+  if(curId === null) return;
+  liked = !liked;
+  document.getElementById('pl-heart').textContent = liked ? '♥' : '♡';
+  document.getElementById('pl-heart').style.color = liked ? '#e05070' : '';
+  document.getElementById('pl-heart').setAttribute('aria-label', liked ? 'Unlike Track' : 'Like Track');
+}
+
+function filterMood(mood){
+  goPage('home', document.getElementById('nav-home'));
+  document.getElementById('featured-section').style.display = 'none';
+  document.getElementById('trending-section').style.display = 'none';
+
+  // Highlight mood section temporarily
+  document.querySelectorAll('.mood').forEach(m => m.style.opacity = '.5');
+  const moodMap = {dard:0,ishq:1,jashn:2,sukoon:3,junoon:4};
+  if(moodMap[mood] !== undefined) document.querySelectorAll('.mood')[moodMap[mood]].style.opacity = '1';
+  setTimeout(()=>document.querySelectorAll('.mood').forEach(m => m.style.opacity = '1'), 1500);
+
+  // Filter and show search section for mood
+  const filtered = Object.values(tracksMap).filter(t => t.mood === mood);
+  const searchSec = document.getElementById('search-results-section');
+  const searchList = document.getElementById('search-results-list');
+  searchSec.style.display = 'block';
+  searchSec.querySelector('.sec-title').innerHTML = `MOOD: ${esc(mood).toUpperCase()} <div class="sec-line"></div>`;
+
+  if(filtered.length > 0) {
+    renderPlaylist(filtered, searchList);
+    playTrack(filtered[0].id);
+  } else {
+    searchList.innerHTML = '<div style="color:var(--tx3);padding:20px;text-align:center">No tracks found for this mood.</div>';
+  }
+}
+
+// ─── SEARCH & NAV ────────────────────────────────────────────────────────────
+function handleSearch(query) {
+  const q = query.toLowerCase().trim();
+  const searchSec = document.getElementById('search-results-section');
+  const searchList = document.getElementById('search-results-list');
+  const featSec = document.getElementById('featured-section');
+  const trendSec = document.getElementById('trending-section');
+
+  if(q.length < 2) {
+    clearSearch();
+    return;
+  }
+
+  goPage('home', document.getElementById('nav-home'));
+  featSec.style.display = 'none';
+  trendSec.style.display = 'none';
+  searchSec.style.display = 'block';
+  searchSec.querySelector('.sec-title').innerHTML = `SEARCH RESULTS <div class="sec-line"></div>`;
+
+  const results = Object.values(tracksMap).filter(t =>
+    t.name.toLowerCase().includes(q) ||
+    t.artist.toLowerCase().includes(q)
+  );
+
+  if(results.length > 0) {
+    renderPlaylist(results, searchList);
+  } else {
+    searchList.innerHTML = '<div style="color:var(--tx3);padding:20px;text-align:center">No songs or artists found. Try another term.</div>';
+  }
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results-section').style.display = 'none';
+  document.getElementById('featured-section').style.display = 'block';
+  document.getElementById('trending-section').style.display = 'block';
+}
+
+function goPage(name, el){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  if(name !== 'home') clearSearch();
+}
+
+// ─── KEYBOARD SHORTCUTS ──────────────────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  // Toggle play/pause with Spacebar if not typing in input
+  if(e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+    e.preventDefault();
+    togglePlay();
+  }
+});
+
+// ─── GREETING ────────────────────────────────────────────────────────────────
+const h = new Date().getHours();
+const greet = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : h < 21 ? 'Good Evening' : 'Good Night';
+document.getElementById('greet-title').textContent = greet;
+</script>
+</body>
+</html>

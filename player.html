@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Awaaz | Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/player.css" />
+</head>
+<body class="subpage-body">
+  <main class="fullplayer-page">
+    <div class="fullplayer-bg"></div>
+    <a class="fullplayer-back" href="index.html" aria-label="Back to home">&larr;</a>
+
+    <div class="fullplayer-disc-wrap">
+      <div class="fullplayer-disc" id="fullplayer-disc">
+        <div class="fullplayer-disc-center">
+          <div class="fullplayer-disc-label">AW</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fullplayer-info">
+      <div class="fullplayer-title" id="fullplayer-title">Pasoori</div>
+      <div class="fullplayer-artist" id="fullplayer-artist">Ali Sethi and Shae Gill</div>
+    </div>
+
+    <div class="fullplayer-controls">
+      <button class="fullctrl-btn" type="button" onclick="prevTrack()" aria-label="Previous">&#9664;&#9664;</button>
+      <button class="fullplay-btn" id="fullplay-btn" type="button" onclick="togglePlay()" aria-label="Play or pause">&#9654;</button>
+      <button class="fullctrl-btn" type="button" onclick="nextTrack()" aria-label="Next">&#9654;&#9654;</button>
+    </div>
+
+    <div class="fullplayer-progress">
+      <span class="full-time" id="full-time-current">0:00</span>
+      <div class="full-progress-bar" id="full-progress-bar">
+        <div class="full-progress-fill" id="full-progress-fill"></div>
+      </div>
+      <span class="full-time" id="full-time-total">0:00</span>
+    </div>
+
+    <div class="fullplayer-lyrics">
+      <div class="lyrics-ur" id="lyrics-line">Music waiting for the next cue.</div>
+      <div class="lyrics-roman" id="lyrics-roman">The groove returns when you press play.</div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/player.js"></script>
+  <script>
+    function formatPlaybackTime(totalSeconds) {
+      const safeSeconds = Math.max(0, Math.floor(totalSeconds || 0));
+      const minutes = Math.floor(safeSeconds / 60);
+      const seconds = String(safeSeconds % 60).padStart(2, "0");
+      return minutes + ":" + seconds;
+    }
+
+    function syncFullPlayer(event) {
+      const state = event && event.detail ? event.detail : (typeof window.getPlayerState === "function" ? window.getPlayerState() : null);
+      if (!state || !state.track) {
+        return;
+      }
+
+      const title = document.getElementById("fullplayer-title");
+      const artist = document.getElementById("fullplayer-artist");
+      const current = document.getElementById("full-time-current");
+      const total = document.getElementById("full-time-total");
+      const fill = document.getElementById("full-progress-fill");
+      const button = document.getElementById("fullplay-btn");
+      const disc = document.getElementById("fullplayer-disc");
+      const lyrics = document.getElementById("lyrics-line");
+      const roman = document.getElementById("lyrics-roman");
+
+      title.textContent = state.track.title;
+      artist.textContent = state.track.artist;
+      current.textContent = formatPlaybackTime(state.currentTime);
+      total.textContent = state.track.duration;
+      fill.style.width = Math.round(state.progress * 10000) / 100 + "%";
+      button.innerHTML = state.isPlaying ? "&#10074;&#10074;" : "&#9654;";
+      disc.classList.toggle("spinning", state.isPlaying);
+      lyrics.textContent = state.track.lyricsLine || "Music waiting for the next cue.";
+      roman.textContent = state.track.romanLine || "The groove returns when you press play.";
+    }
+
+    function handleFullSeek(event) {
+      const bar = document.getElementById("full-progress-bar");
+      if (!bar || typeof window.seekTrackToRatio !== "function") {
+        return;
+      }
+
+      const bounds = bar.getBoundingClientRect();
+      if (!bounds.width) {
+        return;
+      }
+
+      const ratio = (event.clientX - bounds.left) / bounds.width;
+      window.seekTrackToRatio(ratio);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const progressBar = document.getElementById("full-progress-bar");
+      if (progressBar) {
+        progressBar.addEventListener("click", handleFullSeek);
+      }
+      syncFullPlayer();
+    });
+
+    document.addEventListener("awaaz:playerchange", syncFullPlayer);
+  </script>
+</body>
+</html>
